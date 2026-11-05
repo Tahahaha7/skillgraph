@@ -23,6 +23,4 @@ WIN_PROB_STEP_OFFSETS = (-16.0, -4.0, -1.0, 0.0, 1.0, 4.0, 16.0)  # breakpoints,
 NEGLIGIBLE_Z = -40.0  # a team this many sd behind everywhere has probability 0
 MC_SAMPLES = 100_000  # default Monte Carlo samples (standard error <= 0.0016)
 MC_CHUNK_ELEMENTS = 4_000_000  # samples x teams per chunk (~32 MB)
-MVN_ABSEPS = 1e-8  # multivariate normal box probability (4+ teams) ...
-MVN_RELEPS = 1e-6
-MVN_MAXPTS_PER_DIM = 50_000
+QMC_LOG2_POINTS = 16  # 2^16 Sobol points for 3+ team outcome probabilities (error ~1e-7)

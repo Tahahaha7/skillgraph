@@ -6,15 +6,13 @@ import math
 
 import numpy as np
 from scipy.integrate import quad
-from scipy.special import log_ndtr, ndtr
-from scipy.stats import multivariate_normal
+from scipy.special import log_ndtr, ndtr, ndtri
+from scipy.stats import qmc
 
 from .._constants import (
     MC_CHUNK_ELEMENTS,
-    MVN_ABSEPS,
-    MVN_MAXPTS_PER_DIM,
-    MVN_RELEPS,
     NEGLIGIBLE_Z,
+    QMC_LOG2_POINTS,
     WIN_PROB_SPAN,
     WIN_PROB_STEP_OFFSETS,
 )
@@ -84,7 +82,12 @@ def chain_box_probability(
 ) -> float:
     """P(lower_k <= T_k - T_{k+1} <= upper_k for all k), T_k independent Gaussians.
 
-    Deterministic (seeded) quasi-Monte Carlo; absolute error ~1e-7.
+    Genz's sequential transformation of the multivariate normal integral,
+    averaged over a fixed scrambled Sobol point set: deterministic, with
+    absolute error ~1e-7 (4e-8 worst case against a high-precision
+    reference in the tests). Written out rather than delegated to SciPy
+    because SciPy's equivalent changed its seeding and tolerance handling
+    across versions.
     """
     k = len(means) - 1
     mean = np.array([means[i] - means[i + 1] for i in range(k)])
@@ -93,8 +96,18 @@ def chain_box_probability(
         cov[i, i] = variances[i] + variances[i + 1]
         if i + 1 < k:
             cov[i, i + 1] = cov[i + 1, i] = -variances[i + 1]
-    dist = multivariate_normal(mean=mean, cov=cov, seed=0)
-    # Tolerances are set as attributes: SciPy < 1.16 does not accept them as
-    # keywords here, and newer versions accept both.
-    dist.maxpts, dist.abseps, dist.releps = MVN_MAXPTS_PER_DIM * k, MVN_ABSEPS, MVN_RELEPS
-    return min(max(float(dist.cdf(upper, lower_limit=lower)), 0.0), 1.0)
+    a, b = np.asarray(lower, float) - mean, np.asarray(upper, float) - mean
+    chol = np.linalg.cholesky(cov)
+    u = qmc.Sobol(d=max(k - 1, 1), scramble=True, seed=0).random_base2(QMC_LOG2_POINTS)
+    n = len(u)
+    d = np.full(n, float(ndtr(a[0] / chol[0, 0])))
+    e = np.full(n, float(ndtr(b[0] / chol[0, 0])))
+    f = e - d
+    y = np.zeros((n, k))
+    for i in range(1, k):
+        y[:, i - 1] = ndtri(np.clip(d + u[:, i - 1] * (e - d), 1e-300, 1 - 2.2e-16))
+        s = y[:, :i] @ chol[i, :i]
+        d = ndtr((a[i] - s) / chol[i, i])
+        e = ndtr((b[i] - s) / chol[i, i])
+        f = f * (e - d)
+    return min(max(float(f.mean()), 0.0), 1.0)

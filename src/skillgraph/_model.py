@@ -219,9 +219,9 @@ class SkillModel:
 
         The evidence ``rate`` conditions on, so the right quantity for
         log-loss. Accuracy: 2 teams exact and log-stable for any upset.
-        3-12 teams: deterministic, absolute error ~1e-7 (~50 ms per call for
-        4+ teams); outcomes rarer than that may come back as 0 (log -inf),
-        so FFA log-loss on very unlikely results is unreliable.
+        3-12 teams: deterministic quasi-Monte Carlo, absolute error ~1e-7
+        (~35 ms per call); outcomes rarer than that may come back as 0
+        (log -inf), so FFA log-loss on very unlikely results is unreliable.
         Raises ValueError above 12 teams.
         """
         teams_, pp = self._check_teams(teams, partial_play)
