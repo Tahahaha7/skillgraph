@@ -23,8 +23,8 @@
 - 3+ teams: EP; matches an independent dense EP to 1e-8; default `min_delta` within 1e-3 sigma of converged;
   ~0.05 sigma from the exact posterior (Monte Carlo).
 - `win_probabilities`: ~1e-15 up to 25 teams; seeded Monte Carlo above (SE <= 0.0016).
-- `outcome_probability`: 2 teams exact and log-stable; 3 teams ~1e-15 and 4-12 teams ~1e-7 *absolute*
-  (rarer outcomes can return 0); > 12 teams unsupported.
+- `outcome_probability`: 2 teams exact and log-stable; 3-12 teams ~1e-7 *absolute* (rarer outcomes can
+  return 0); > 12 teams unsupported.
 - Exact symmetries: identical-player draws keep means; mirrored matches mirror; deterministic output.
 
 ## Model limitations (not bugs)

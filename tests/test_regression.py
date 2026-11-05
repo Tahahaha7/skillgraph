@@ -36,7 +36,7 @@ def test_predictions():
         lp, lp_exp = env.outcome_probability(teams, ranks, pp, log=True), exp["outcome_log_probability"]
         if lp == lp_exp:  # includes both -inf
             continue
-        if len(teams) <= 3:
+        if len(teams) == 2:
             assert abs(lp - lp_exp) <= 1e-10 * max(1.0, abs(lp_exp))
-        else:  # quasi-Monte Carlo: compare probabilities at its ~1e-7 accuracy
+        else:  # 3+ teams: compare probabilities at the method's ~1e-7 accuracy
             assert abs(math.exp(lp) - math.exp(lp_exp)) <= 1e-6

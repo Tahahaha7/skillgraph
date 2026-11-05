@@ -99,7 +99,7 @@ def test_outcome_probability_two_teams_sums_to_one():
 def test_outcome_probability_orderings_sum_to_one_without_draws():
     rng = np.random.default_rng(6)
     env = TS1(draw_probability=0.0)
-    for k, tol in ((3, 1e-12), (4, 1e-5)):  # 4+ teams: quasi-Monte Carlo, ~1e-7 per call
+    for k, tol in ((3, 1e-5), (4, 1e-5)):  # 3+ teams: ~1e-7 absolute per call
         for _ in range(5):
             teams = _rand_teams(rng, k)
             total = sum(env.outcome_probability(teams, list(perm)) for perm in itertools.permutations(range(k)))

@@ -36,7 +36,10 @@ def mp_draw(t, eps, dps=60):
                 if lo < p < hi:
                     pts.add(p)
         pts = sorted(pts)
-        g = lambda x: mp.exp(-(x * x - x0 * x0) / 2)
+
+        def g(x):
+            return mp.exp(-(x * x - x0 * x0) / 2)
+
         z = mp.quad(g, pts)
         m = mp.quad(lambda x: x * g(x), pts) / z
         var = mp.quad(lambda x: (x - m) ** 2 * g(x), pts) / z

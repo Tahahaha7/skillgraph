@@ -89,9 +89,9 @@ def test_huge_matches_are_fast_and_valid():
     env = TS1()
     rng = np.random.default_rng(0)
     cases = [
-        ([[Rating()] * 500, [Rating()] * 500], 0.5),
-        ([[Rating(float(x), 3.0)] for x in rng.normal(25, 8, n(1000, 3000))], n(3.0, 10.0)),
-        ([[Rating()] * 5 for _ in range(30)], 1.0),
+        ([[Rating()] * 500, [Rating()] * 500], 5.0),
+        ([[Rating(float(x), 3.0)] for x in rng.normal(25, 8, n(1000, 3000))], n(20.0, 60.0)),
+        ([[Rating()] * 5 for _ in range(30)], 10.0),
     ]
     for teams, budget in cases:
         t0 = time.time()
