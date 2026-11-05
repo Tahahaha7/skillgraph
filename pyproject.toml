@@ -29,6 +29,7 @@ markers = ["slow: oracle and simulation tests (skip with -m 'not slow')"]
 line-length = 120
 target-version = "py310"
 src = ["src", "tests"]
+extend-exclude = ["*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W"]
