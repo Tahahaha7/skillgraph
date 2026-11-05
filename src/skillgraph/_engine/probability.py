@@ -93,7 +93,8 @@ def chain_box_probability(
         cov[i, i] = variances[i] + variances[i + 1]
         if i + 1 < k:
             cov[i, i + 1] = cov[i + 1, i] = -variances[i + 1]
-    dist = multivariate_normal(
-        mean=mean, cov=cov, seed=0, abseps=MVN_ABSEPS, releps=MVN_RELEPS, maxpts=MVN_MAXPTS_PER_DIM * k
-    )
+    dist = multivariate_normal(mean=mean, cov=cov, seed=0)
+    # Tolerances are set as attributes: SciPy < 1.16 does not accept them as
+    # keywords here, and newer versions accept both.
+    dist.maxpts, dist.abseps, dist.releps = MVN_MAXPTS_PER_DIM * k, MVN_ABSEPS, MVN_RELEPS
     return min(max(float(dist.cdf(upper, lower_limit=lower)), 0.0), 1.0)
