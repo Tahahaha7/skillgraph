@@ -30,8 +30,9 @@ result.ratings["ann"], result.probabilities
 ```
 
 Top-level functions use TrueSkill 1 with default settings, same as `sg.TS1.rate(...)`.
-Accuracy guarantees, fixes relative to other implementations, and known
-limitations: `docs/ts1.md`.
+A guided tour with plots (teams, draws, matchmaking, a simulated season, calibration,
+model selection): `examples/skillgraph_tour.ipynb`. Accuracy guarantees, fixes relative
+to other implementations, and known limitations: `docs/ts1.md`.
 
 ## Development
 
