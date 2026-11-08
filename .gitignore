@@ -9,3 +9,5 @@ build/
 .venv/
 .DS_Store
 .ipynb_checkpoints/
+examples/data/
+examples/data/
