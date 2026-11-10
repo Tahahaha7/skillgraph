@@ -81,13 +81,45 @@ of real ATP matches: the typical rating change per match shrinks from 4.6 points
 point after 10 matches and 0.1 after 100. With skill drift $\tau>0$ the uncertainty never reaches zero;
 it settles where drift and evidence balance.
 
+## Accuracy and robustness
+
+Every result is checked against independent implementations of the same model: 80-digit
+arbitrary-precision math, a textbook closed form, a separately written matrix-based EP, and Monte Carlo
+sampling of the exact posterior. Compared with existing implementations:
+
+| Problem | Here |
+|---|---|
+| Crashes on extreme upsets | Stable at $10^{12}$-sd upsets |
+| Textbook `1 - w` cancels: variance errors of 100% (big upsets) to $3\times10^6$ (tiny draw rates) | Regime-specific formulas, $\le 2\times10^{-10}$ relative |
+| Odd ratings in large free-for-alls | Matches an independent dense EP to $10^{-12}$ at 100+ players |
+| Cavities from subtracting large precisions (negative variances) | Products of the other messages; no Gaussian division |
+| EP oscillation on contradictory results | Damping fallback; warns only beyond $10^6$-sd gaps, still returns valid ratings |
+| Results drift between versions | Golden-file regression test, 300 cases |
+| Win probability for two teams only | `win_probabilities` (any number of teams), `outcome_probability` (incl. draws) |
+
+Guarantees enforced by the tests: two teams exact (closed form, $10^{-10}$ vs arbitrary precision);
+three or more teams within $10^{-8}$ of a converged independent EP and about $0.05\sigma$ of the exact
+posterior; `win_probabilities` exact to $10^{-15}$ up to 25 teams; `outcome_probability` exact for two
+teams and $\sim10^{-7}$ absolute for 3–12 teams. Throughput on one core: ~79k 1v1 updates/s,
+~33k 5v5/s, ~850 8-player free-for-alls/s.
+
+## Limitations
+
+- Sigmas are slightly overconfident: about 60% of true skills fall within $1\sigma$ (ideal 68%);
+  $2\sigma$ coverage is about 95%. TrueSkill 1 rates one match at a time and ignores correlations
+  between players.
+- Results depend on the order matches are processed, by design.
+- With three or more teams, ties among more than two teams depend on input order (only consecutive
+  finishers are compared).
+- The defaults were set for video games. Tune `beta`, `tau` and `draw_probability` on your data
+  (see the tennis notebook).
+- Only skill *differences* are identified by results; the overall level stays anchored to the prior.
+
 ## Examples
 
 - `examples/atp_tennis.ipynb`: seven seasons of real ATP tennis, with parameter tuning, an out-of-sample
   test against Elo and the official ranking, and surface-specific ratings.
 - `examples/skillgraph_tour.ipynb`: a guided tour on simulated data.
-
-Accuracy guarantees, fixes relative to other implementations, and known limitations: `docs/ts1.md`.
 
 ## Development
 
