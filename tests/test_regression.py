@@ -1,7 +1,7 @@
 """Results must not drift between versions (cf. upstream issue #33).
 
 golden_ts1.json holds inputs and expected outputs. If a change is
-intentional, regenerate it with ``python scripts/make_golden.py`` and say so
+intentional, regenerate it with ``python tests/make_golden.py`` and say so
 in the changelog.
 """
 
