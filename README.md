@@ -70,6 +70,17 @@ by moment matching (expectation propagation). With two teams one pass is exact; 
 engine iterates over the chain of differences until it converges. The posterior $\mu_i$, $\sigma_i$
 become the player's new rating.
 
+## How fast do ratings converge?
+
+![convergence](examples/convergence.png)
+
+Left: a simulated 1v1 ladder where true skills are known. With default settings $\sigma$ falls from
+8.3 to 3.6 after 10 games, 2.3 after 25 and 1.2 after 100, and the actual error in $\mu$ tracks it
+closely, which is what a calibrated uncertainty should do. Right: the same quantities on seven seasons
+of real ATP matches: the typical rating change per match shrinks from 4.6 points on debut to about 1
+point after 10 matches and 0.1 after 100. With skill drift $\tau>0$ the uncertainty never reaches zero;
+it settles where drift and evidence balance.
+
 ## Examples
 
 - `examples/atp_tennis.ipynb`: seven seasons of real ATP tennis, with parameter tuning, an out-of-sample
