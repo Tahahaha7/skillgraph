@@ -1,7 +1,7 @@
 # skillgraph
 
 Bayesian skill ratings in Python, built on an expectation-propagation engine.
-TrueSkill 1 is complete; TrueSkill 2 is in progress (see `ROADMAP.md`).
+TrueSkill 1 is complete; TrueSkill 2 is in progress.
 
 > TrueSkill is a trademark of Microsoft. This project is independent and not
 > affiliated with or endorsed by Microsoft.
