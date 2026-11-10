@@ -1,0 +1,61 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Schola}
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit,backgrounds}
+\definecolor{blue}{HTML}{4C72B0}
+\definecolor{orange}{HTML}{DD8452}
+\definecolor{grey}{HTML}{8C8C8C}
+\newcommand{\var}[1]{\textit{#1}}
+\tikzset{
+  vnode/.style={circle,draw=blue,line width=1.1pt,fill=white,minimum size=9.5mm,inner sep=1pt,font=\large},
+  fnode/.style={rectangle,draw=black!70,fill=black!8,line width=0.8pt,inner sep=4pt,font=\small},
+  outcome/.style={fnode,fill=orange!25,draw=orange!80!black},
+  edge/.style={line width=0.8pt,draw=black!60},
+  team/.style={rounded corners=6pt,draw=grey,dashed,inner sep=9pt},
+  note/.style={font=\small,text=grey},
+}
+\begin{document}
+\begin{tikzpicture}[node distance=9mm and 12mm]
+% priors
+\node[fnode] (pr1) {prior  N(μ\textsubscript{1}, σ\textsubscript{1}²)};
+\node[fnode,right=of pr1] (pr2) {prior  N(μ\textsubscript{2}, σ\textsubscript{2}²)};
+\node[fnode,right=22mm of pr2] (pr3) {prior  N(μ\textsubscript{3}, σ\textsubscript{3}²)};
+% skills
+\node[vnode,below=of pr1] (s1) {\var{s}\textsubscript{1}};
+\node[vnode,below=of pr2] (s2) {\var{s}\textsubscript{2}};
+\node[vnode,below=of pr3] (s3) {\var{s}\textsubscript{3}};
+% performance factors
+\node[fnode,below=of s1] (pf1) {N(\var{s}\textsubscript{1}, β²)};
+\node[fnode,below=of s2] (pf2) {N(\var{s}\textsubscript{2}, β²)};
+\node[fnode,below=of s3] (pf3) {N(\var{s}\textsubscript{3}, β²)};
+% performances
+\node[vnode,below=of pf1] (p1) {\var{p}\textsubscript{1}};
+\node[vnode,below=of pf2] (p2) {\var{p}\textsubscript{2}};
+\node[vnode,below=of pf3] (p3) {\var{p}\textsubscript{3}};
+% team sums
+\path (p1) -- (p2) coordinate[midway] (mA);
+\node[fnode,below=of mA] (sumA) {\var{t}\textsubscript{A} = \var{p}\textsubscript{1} + \var{p}\textsubscript{2}};
+\node[fnode] (sumB) at (sumA -| p3) {\var{t}\textsubscript{B} = \var{p}\textsubscript{3}};
+\node[vnode,below=of sumA] (tA) {\var{t}\textsubscript{A}};
+\node[vnode,below=of sumB] (tB) {\var{t}\textsubscript{B}};
+% difference and outcome
+\path (tA) -- (tB) coordinate[midway] (mD);
+\node[fnode,below=of mD] (diff) {\var{d} = \var{t}\textsubscript{A} − \var{t}\textsubscript{B}};
+\node[vnode,below=of diff] (d) {\var{d}};
+\node[outcome,below=of d] (win) {outcome:  \var{d} > ε   (team A won)};
+% edges
+\foreach \a/\b in {pr1/s1,pr2/s2,pr3/s3,s1/pf1,s2/pf2,s3/pf3,pf1/p1,pf2/p2,pf3/p3,p1/sumA,p2/sumA,p3/sumB,sumA/tA,sumB/tB,tA/diff,tB/diff,diff/d,d/win}
+  \draw[edge] (\a) -- (\b);
+% team boxes
+\begin{scope}[on background layer]
+  \node[team,fit=(pr1)(pr2)(p1)(p2)(tA),label={[note]above:team A}] {};
+  \node[team,fit=(pr3)(p3)(tB),label={[note]above:team B}] {};
+\end{scope}
+% legend
+\node[vnode,minimum size=6mm,font=\small] (lv) at ([xshift=28mm]pr3.east) {};
+\node[right=2mm of lv,note] {variable};
+\node[fnode,below=4mm of lv,minimum width=6mm,minimum height=5mm] (lf) {};
+\node[right=2mm of lf,note] {factor};
+\end{tikzpicture}
+\end{document}

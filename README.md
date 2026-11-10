@@ -44,25 +44,10 @@ t_A=\sum_{i\in A} p_i,\qquad d=t_A-t_B,\qquad
 \text{A wins} \iff d>\varepsilon,\qquad \text{draw} \iff |d|\le\varepsilon .
 $$
 
-Every match is this factor graph (circles are variables, boxes are factors); here team A, two players,
-beat team B, one player:
+Every match is this factor graph; here team A, two players, beat team B, one player
+(source: `examples/factor_graph.tex`):
 
-```mermaid
-flowchart TB
-    subgraph A[Team A]
-        direction TB
-        pr1["prior N(μ₁, σ₁²)"] --> s1((s₁)) --> pf1["N(s₁, β²)"] --> p1((p₁))
-        pr2["prior N(μ₂, σ₂²)"] --> s2((s₂)) --> pf2["N(s₂, β²)"] --> p2((p₂))
-        p1 --> sumA["t_A = p₁ + p₂"]
-        p2 --> sumA --> tA((t_A))
-    end
-    subgraph B[Team B]
-        direction TB
-        pr3["prior N(μ₃, σ₃²)"] --> s3((s₃)) --> pf3["N(s₃, β²)"] --> p3((p₃)) --> sumB["t_B = p₃"] --> tB((t_B))
-    end
-    tA --> diff["d = t_A − t_B"]
-    tB --> diff --> d((d)) --> win["I(d > ε) : A won"]
-```
+![factor graph](examples/factor_graph.png)
 
 Rating a match means computing each $s_i$'s posterior. Messages flow down from the priors to the
 outcome and back up. Everything is Gaussian except the outcome factor at the bottom, which is handled
